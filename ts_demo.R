@@ -8,27 +8,16 @@
 
 
 
+###############################################
+# Ad Optimization - Part I - Data Exploration #
+###############################################
 
-#############
-# Libraries #
-#############
-
-# Parts I, II
 library(dplyr)
 library(ggplot2)
 library(tsibble) # Allows us to make a tsibble (tidy time series object)
 library(fable)   # Contains timeseries modeling tools
 library(feasts)  # Allows multiple ts models to be fit at once
 
-# Part III
-library(data.table)
-
-
-
-
-###############################################
-# Ad Optimization - Part I - Data Exploration #
-###############################################
 
 ###########################################################################
 # A. Load the data from ts_analysis_2020/data/hourly_ad_category_data.csv #
@@ -189,6 +178,9 @@ fwrite(day, "data/day3.csv")
 #########################
 # A/B Testing Over Time #
 #########################
+
+library(data.table)
+library(ggplot2)
 
 
 ############################
