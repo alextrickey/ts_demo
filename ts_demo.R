@@ -26,6 +26,7 @@ library(feasts)  # Allows multiple ts models to be fit at once
 ad_data <- read.csv("data/hourly_ad_category_data.csv",
                     colClasses = c("ts" = "POSIXct"))
 
+
 #####################################
 # B. View and/or summarize the data #
 #####################################
@@ -159,21 +160,20 @@ accuracy(predictions, ts_ad_data) %>%
 
 predictions %>%
   filter(ad_type == "dog_food") %>%
-  autoplot(all_ad_data)
+  autoplot(ts_ad_data)
 
 predictions %>%
   filter(ad_type == "cat_toys") %>%
-  autoplot(all_ad_data)
+  autoplot(ts_ad_data)
 
 predictions %>%
   filter(.model == "ets") %>%
   filter(ad_type == "phone_service") %>%
-  autoplot(all_ad_data)
+  autoplot(ts_ad_data)
 
-day <- fread("../adz_demo/data/day3.csv", colClasses = c("baseline"="factor"))
-day[, variation := ifelse(baseline==1, 'Baseline', 'Feature')]
-day[, baseline:=NULL]
-fwrite(day, "data/day3.csv")
+
+
+
 
 #########################
 # A/B Testing Over Time #
