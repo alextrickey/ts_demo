@@ -68,8 +68,8 @@ ggplot(data = ad_data,
   geom_point() +
   geom_smooth()
 
-# Visualize RPC (just show one day)
-ggplot(data = ad_data %>% filter(ts >= "2019-05-13"),
+# Visualize RPC (just show a couple days)
+ggplot(data = ad_data %>% filter(ts >= "2021-11-22"),
        aes(ts, rpc, col = ad_type)) +
   geom_point() +
   geom_smooth()
