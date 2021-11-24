@@ -110,11 +110,11 @@ ts_ad_data %>%
 # C. Separate out the training data #
 #####################################
 
-summary(ts_ad_data) # last day is 2019-05-14
+summary(ts_ad_data) # last day is 2021-11-23
 
 # Leave out the last day for testing
 train <- ts_ad_data %>%
-  filter(ts < as.Date("2019-05-14"))
+  filter(ts < as.Date("2021-11-23"))
 
 
 #########################################
@@ -262,6 +262,7 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
   geom_pointrange() +
   coord_flip()
 
+
 #########################
 # D. Combine Comparison #
 #########################
@@ -290,3 +291,4 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
 ggplot(data = combined[, .(mean_rps = mean(rps), .N), by = .(variation, date)],
        aes(variation, y = mean_rps, x = date, col = variation, size = N)) +
   geom_point()
+
