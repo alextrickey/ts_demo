@@ -263,9 +263,9 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
   coord_flip()
 
 
-#########################
-# D. Combine Comparison #
-#########################
+##########################
+# D. Combined Comparison #
+##########################
 
 # Great things look good! Let's combine the three days, so we can report
 # back to the team...
@@ -291,4 +291,3 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
 ggplot(data = combined[, .(mean_rps = mean(rps), .N), by = .(variation, date)],
        aes(variation, y = mean_rps, x = date, col = variation, size = N)) +
   geom_point()
-
