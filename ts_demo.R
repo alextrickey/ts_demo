@@ -133,8 +133,16 @@ train <- train %>%
 models <- train %>%
   model(
     snaive = SNAIVE(rpc ~ lag("day")),
+    #   This is a seasonal naive model
+    #   Predicts value at the same time on the previous day
+    
     ets = ETS(rpc),
+    #   ETS stands for: Error, Trend, Seasonal
+    #   This is a broad class of exponential smoothing models
+    
     arima = ARIMA(rpc)
+    #   AutoRegressive Integrated Moving Average model
+    
   ) %>%
   mutate(
     ets_arima = (ets + arima) / 2
