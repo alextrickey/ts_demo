@@ -126,9 +126,9 @@ train <- train %>%
   interpolate(train)
 
 
-#####################################
-# E. Fit an ARIMA, ETS, etc. Models #
-#####################################
+##################################
+# E. Fit ARIMA, ETS, etc. Models #
+##################################
 
 models <- train %>%
   model(
