@@ -43,7 +43,7 @@ summary(ad_data)
 ad_data %>%
   summarize(across(everything(), list(function(c) {sum(is.na(c))} )))
 
-# Why are there sometimes more impressions than clicks?
+# Why are there sometimes more clicks than impressions?
 ad_data %>%
   filter(imps < clicks) %>%
   count()
