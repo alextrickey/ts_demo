@@ -143,9 +143,6 @@ models <- train %>%
     arima = ARIMA(rpc)
     #   AutoRegressive Integrated Moving Average model
     
-  ) %>%
-  mutate(
-    ets_arima = (ets + arima) / 2
   )
 
 
