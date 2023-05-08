@@ -89,9 +89,9 @@ ggplot(data = ad_data %>% filter(ts >= "2021-11-22"),
 ts_ad_data = ad_data %>% as_tsibble(key=ad_type, index=ts)
 
 
-####################################################
-# B. Create visualizations using STL decomposition #
-####################################################
+############################################################
+# B. Create Seasonal Trend decomposition using Loess (STL) #
+############################################################
 
 ts_ad_data %>%
   model(arima = ARIMA(rpc ~ trend())) %>%
