@@ -182,6 +182,25 @@ predictions %>%
 library(data.table)
 library(ggplot2)
 
+plot_confidence_intervals <- function(rps_data) {
+  
+  # Calculate mean, sd, and margin of error for RPS estimates
+  stats <- rps_data[, .(m = mean(rps),
+                    sd = sd(rps), .N,
+                    moe = 1.96*sd(rps)/sqrt(.N)
+  ),
+  by = variation]
+  
+  # Calculate confidence intervals
+  stats[, `:=`(lower = m - moe,
+               upper = m + moe)]
+  
+  # Plot confidence intervals
+  ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
+    geom_pointrange() +
+    coord_flip()
+}
+  
 
 ############################
 # A. Day1 Model Comparison #
@@ -192,21 +211,8 @@ library(ggplot2)
 # Read in and check the data
 day1 <- fread("data/day1.csv",
               colClasses = c("variation"="factor", "date"="Date"))
-head(day1)
 
-# Create confidence intervals for the RPS estimates
-stats <- day1[, .(m = mean(rps),
-                  sd = sd(rps), .N,
-                  moe = 1.96*sd(rps)/sqrt(.N)
-                  ),
-              by = variation]
-stats[, `:=`(lower = m - moe,
-             upper = m + moe)]
-
-print(stats)
-ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
-  geom_pointrange() +
-  coord_flip()
+plot_confidence_intervals(day1)
 
 # Does it seems safe to send more traffic to the new optimizer?
 
@@ -221,19 +227,8 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
 # Repeat the analysis for the second day
 day2 <- fread("data/day2.csv",
               colClasses = c("variation"="factor", "date"="Date"))
-stats <- day2[, .(m = mean(rps),
-                  sd = sd(rps),
-                  .N,
-                  moe = 1.96*sd(rps)/sqrt(.N)
-                  ),
-              by = variation]
-stats[, `:=`(lower = m - moe,
-             upper = m + moe)]
 
-print(stats)
-ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
-  geom_pointrange() +
-  coord_flip()
+plot_confidence_intervals(day2)
 
 # Does it make sense to increase the traffic % again?
 
@@ -248,19 +243,8 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
 # Repeat the analysis for the third day
 day3 <- fread("data/day3.csv",
               colClasses = c("variation"="factor", "date"="Date"))
-head(day3)
 
-stats <- day3[, .(m = mean(rps),
-                  sd = sd(rps),
-                  .N,
-                  moe = 1.96*sd(rps)/sqrt(.N)
-                  ), by = variation]
-stats[, `:=`(lower = m - moe,
-             upper = m + moe)]
-print(stats)
-ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
-  geom_pointrange() +
-  coord_flip()
+plot_confidence_intervals(day3)
 
 
 ##########################
@@ -271,21 +255,9 @@ ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
 # back to the team...
 combined <- rbind(day1, day2, day3)
 
-stats <- combined[, .(m = mean(rps),
-                      sd = sd(rps),
-                      .N,
-                      moe = 1.96*sd(rps)/sqrt(.N)
-                      ),
-                  by = variation]
-stats[, `:=`(lower = m - moe,
-             upper = m + moe)]
+plot_confidence_intervals(combined)
 
-print(stats)
-ggplot(stats, aes(x=variation, y=m, ymin=lower, ymax=upper)) +
-  geom_pointrange() +
-  coord_flip()
-
-# Wait... what?! What happened? Why?
+# Wait... what?! What happened?
 
 # Visualize RPS
 ggplot(data = combined[, .(mean_rps = mean(rps), .N), by = .(variation, date)],
