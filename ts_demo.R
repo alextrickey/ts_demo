@@ -150,7 +150,7 @@ models <- train %>%
 # F. Generate Predictions #
 ###########################
 
-predictions <- models %>% forecast(h = "24 hours")
+predictions <- models %>% forecast(h = "23 hours")
 
 
 ##############################
