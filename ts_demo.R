@@ -3,14 +3,20 @@
 #
 # Contents
 #         Part   I - Data Exploration
-#         Part  II - Time Series Analysis
-#         Part III - A/B Testing Over Time
+#         Part  II - Time Series Modeling
+#         Part III - Optimization [Optional]
+#         Part  IV - A/B Testing Over Time
 
 
+#############################
+# Part I - Data Exploration #
+#############################
 
-###############################################
-# Ad Optimization - Part I - Data Exploration #
-###############################################
+# Instructions: 
+#    Load the data using language/libraries of your choice. 
+#    Check the data types of the loaded columns. 
+#    Check for data quality issues. 
+#    Summarize / visualize the time series. 
 
 library(dplyr)
 library(ggplot2)
@@ -31,7 +37,7 @@ ad_data <- read.csv("data/hourly_ad_category_data.csv",
 # B. View and/or summarize the data #
 #####################################
 
-View(ad_data)
+# View(ad_data)
 summary(ad_data)
 
 
@@ -75,29 +81,20 @@ ggplot(data = ad_data %>% filter(ts >= "2021-11-22"),
   geom_smooth()
 
 
+##########################################################
+# E. Plot Seasonal Trend decomposition using Loess (STL) #
+##########################################################
 
-
-####################################################
-# Ad Optimization - Part II - Time Series Analysis #
-####################################################
-
-
-#########################################################
-# A. Convert rpc's for each ad into time-series objects #
-#########################################################
-
+# Convert data to time-series object
 ts_ad_data = ad_data %>% as_tsibble(key=ad_type, index=ts)
 
-
-############################################################
-# B. Create Seasonal Trend decomposition using Loess (STL) #
-############################################################
-
+# Interpolate missing data
 ts_ad_data %>%
   model(arima = ARIMA(rpc ~ trend())) %>%
   interpolate(ts_ad_data) %>%
   autoplot()
 
+# Plot the STL decomposition
 ts_ad_data %>%
   model(arima = ARIMA(rpc ~ trend())) %>%
   interpolate(ts_ad_data) %>%
@@ -106,8 +103,21 @@ ts_ad_data %>%
   autoplot()
 
 
+
+##################################
+# Part II - Time Series Modeling #
+##################################
+
+# Instructions: 
+#    Choose a modeling strategy and prepare the data.
+#    Define training and testing sets. 
+#    How does your strategy handle missing data?
+#    Generate predictions for the test data. 
+#    Calculate metrics to measure the prediction quality.
+
+
 #####################################
-# C. Separate out the training data #
+# A. Separate out the training data #
 #####################################
 
 summary(ts_ad_data) # last day is 2021-11-23
@@ -118,7 +128,7 @@ train <- ts_ad_data %>%
 
 
 #########################################
-# D. Impute nulls in training data only #
+# B. Impute nulls in training data only #
 #########################################
 
 train <- train %>%
@@ -127,7 +137,7 @@ train <- train %>%
 
 
 ##################################
-# E. Fit ARIMA, ETS, etc. Models #
+# C. Fit ARIMA, ETS, etc. Models #
 ##################################
 
 models <- train %>%
@@ -147,7 +157,7 @@ models <- train %>%
 
 
 ###########################
-# F. Generate Predictions #
+# D. Generate Predictions #
 ###########################
 
 predictions <- models %>% forecast(h = "23 hours")
@@ -178,11 +188,36 @@ predictions %>%
 
 
 
+######################################
+# Part III - Optimization [Optional] #
+######################################
+
+# Instructions: 
+#    Consider how you could use your predictions to choose which ad to show. 
+#    Define an algorithm implementing your approach. 
+#    Assuming we need to re-train our model each day, what implications will 
+#        your optimization have for tomorrow's training's model?
 
 
-#########################
-# A/B Testing Over Time #
-#########################
+###################################
+# Part IV - A/B Testing Over Time #
+###################################
+
+# Setup: 
+#     Suppose, we implemented your optimization strategy from the previous 
+#     part and use it to choose which ad to play based on the forecasts.
+#     
+#     We rolled this feature out over several days. On day1 we sent 20% of the
+#     traffic to the new feature (and left 80% on baseline). On day2, we sent
+#     the feature 50% of traffic and on day3 80%. 
+
+# Instructions
+#     Load and investigate the data for day1 in "data/day1.csv".
+#     Which strategy is performing better?
+#     Did we make the right decision to increase the traffic?
+#     Repeat this analysis for day2 and day3. 
+#     Considering all the performance on all three days, what effect do you 
+#         think the feature is having on our revenue?
 
 library(data.table)
 library(ggplot2)
@@ -191,8 +226,8 @@ plot_confidence_intervals <- function(rps_data) {
   
   # Calculate mean, sd, and margin of error for RPS estimates
   stats <- rps_data[, .(m = mean(rps),
-                    sd = sd(rps), .N,
-                    moe = 1.96*sd(rps)/sqrt(.N)
+                        sd = sd(rps), .N,
+                        moe = 1.96*sd(rps)/sqrt(.N)
   ),
   by = variation]
   
@@ -205,7 +240,7 @@ plot_confidence_intervals <- function(rps_data) {
     geom_pointrange() +
     coord_flip()
 }
-  
+
 
 ############################
 # A. Day1 Model Comparison #
